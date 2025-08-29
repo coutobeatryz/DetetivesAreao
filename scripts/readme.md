@@ -37,15 +37,11 @@
 - `data_criacao` **Timestamp**
 - `id_escola` **Int** (FK → Escola)
 
----
-
 ### 📍 Local
 - `id_local` **Int** (PK)
 - `nome_local` **Varchar(50)**
 - `descricao_local` **Varchar(200)**
 - `url_midia_local` **Varchar(200)**
-
----
 
 ### 🔲 QRCode
 - `id_qrcode` **Int** (PK)
