@@ -1,88 +1,89 @@
-CREATE TABLE Pessoas (
-    id_pessoa SERIAL PRIMARY KEY,
-    nome VARCHAR(50) NOT NULL,
-    sobrenome VARCHAR(100),
-    apelido VARCHAR(100) UNIQUE NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    senha_hash VARCHAR(255) NOT NULL,
-    data_nascimento DATE,
-    tipo_pessoa VARCHAR(10) NOT NULL CHECK (tipo_pessoa IN ('aluno', 'professor'))
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  nome VARCHAR(50),
+  sobrenome VARCHAR(100),
+  apelido VARCHAR(100) UNIQUE,
+  data_nascimento DATE,
+  tipo_pessoa VARCHAR(10) CHECK (tipo_pessoa IN ('aluno', 'professor'))
 );
 
+create function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id, apelido, tipo_pessoa, nome)
+  values (new.id, new.raw_user_meta_data->>'apelido', new.raw_user_meta_data->>'tipo_pessoa', new.raw_user_meta_data->>'nome');
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
 CREATE TABLE Escolas (
-    id_escola SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     nome VARCHAR(200) NOT NULL,
     cidade VARCHAR(150),
     estado CHAR(2)
 );
 
 CREATE TABLE Alunos (
-    id_pessoa INT PRIMARY KEY,
+    id_profile UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE,
     pontuacao_total INT DEFAULT 0,
     avatar_url VARCHAR(255),
-    id_escola INT,
-    FOREIGN KEY (id_pessoa) REFERENCES Pessoas(id_pessoa) ON DELETE CASCADE,
-    FOREIGN KEY (id_escola) REFERENCES Escolas(id_escola) ON DELETE SET NULL
+    id_escola INT REFERENCES Escolas(id) ON DELETE SET NULL
 );
 
 CREATE TABLE Professores (
-    id_pessoa INT PRIMARY KEY,
-    FOREIGN KEY (id_pessoa) REFERENCES Pessoas(id_pessoa) ON DELETE CASCADE
+    id_profile UUID PRIMARY KEY REFERENCES profiles(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Professor_Escolas (
-    id_professor INT,
-    id_escola INT,
-    PRIMARY KEY (id_professor, id_escola),
-    FOREIGN KEY (id_professor) REFERENCES Professores(id_pessoa) ON DELETE CASCADE,
-    FOREIGN KEY (id_escola) REFERENCES Escolas(id_escola) ON DELETE CASCADE
+    id_professor UUID REFERENCES Professores(id_profile) ON DELETE CASCADE,
+    id_escola INT REFERENCES Escolas(id) ON DELETE CASCADE,
+    PRIMARY KEY (id_professor, id_escola)
 );
 
 CREATE TABLE Turmas (
-    id_turma SERIAL PRIMARY KEY,
-    id_professor INT NOT NULL,
-    id_escola INT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    id_professor UUID NOT NULL REFERENCES Professores(id_profile) ON DELETE CASCADE,
+    id_escola INT NOT NULL REFERENCES Escolas(id) ON DELETE CASCADE,
     nome VARCHAR(150) NOT NULL,
     codigo_convite VARCHAR(10) UNIQUE,
-    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_professor) REFERENCES Professores(id_pessoa) ON DELETE CASCADE,
-    FOREIGN KEY (id_escola) REFERENCES Escolas(id_escola) ON DELETE CASCADE
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE Turma_Alunos (
-    id_turma INT,
-    id_aluno INT,
-    PRIMARY KEY (id_turma, id_aluno),
-    FOREIGN KEY (id_turma) REFERENCES Turmas(id_turma) ON DELETE CASCADE,
-    FOREIGN KEY (id_aluno) REFERENCES Alunos(id_pessoa) ON DELETE CASCADE
+    id_turma INT REFERENCES Turmas(id) ON DELETE CASCADE,
+    id_aluno UUID REFERENCES Alunos(id_profile) ON DELETE CASCADE,
+    PRIMARY KEY (id_turma, id_aluno)
 );
 
 CREATE TABLE Locais (
-    id_local SERIAL PRIMARY KEY,
-    nome_local VARCHAR(150) NOT NULL,
-    descricao_local TEXT,
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    descricao TEXT,
     url_midia VARCHAR(255)
 );
 
 CREATE TABLE QRCodes (
-    id_qrcode SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     codigo_unico VARCHAR(255) UNIQUE NOT NULL,
-    id_local INT,
+    id_local INT REFERENCES Locais(id) ON DELETE SET NULL,
     titulo_conteudo VARCHAR(255),
     descricao_conteudo TEXT,
     pontos INT NOT NULL DEFAULT 0,
-    ativo BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (id_local) REFERENCES Locais(id_local) ON DELETE SET NULL
+    ativo BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE Leituras (
-    id_leituras SERIAL PRIMARY KEY,
-    id_aluno INT NOT NULL,
-    id_qrcode INT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    id_aluno UUID NOT NULL REFERENCES Alunos(id_profile) ON DELETE CASCADE,
+    id_qrcode INT NOT NULL REFERENCES QRCodes(id) ON DELETE CASCADE,
     data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     pontos_ganhos INT NOT NULL,
-    UNIQUE(id_aluno, id_qrcode),
-    FOREIGN KEY (id_aluno) REFERENCES Alunos(id_pessoa) ON DELETE CASCADE,
-    FOREIGN KEY (id_qrcode) REFERENCES QRCodes(id_qrcode) ON DELETE CASCADE
+    UNIQUE(id_aluno, id_qrcode)
 );
-
