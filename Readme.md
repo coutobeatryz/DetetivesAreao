@@ -11,7 +11,10 @@ As crianças, no papel de *detetives*, são desafiadas a encontrar **QR Codes** 
 Cada QR Code escaneado revela uma curiosidade, um desafio ou um fato interessante sobre a fauna, a flora ou a história local, além de recompensar os pequenos exploradores com pontos.
 
 ---
+## ⚙ Dashboard
+![dashboard](https://github.com/user-attachments/assets/eb0d8b9d-592e-4d98-98df-557f3a287126)
 
+---
 ## ✨ Funcionalidades Principais
 - **Leitor de QR Code:** Câmera integrada ao app para escanear os códigos encontrados no parque.  
 - **Mapa do Detetive (Futuro):** Um mapa estilizado do Parque do Areão com dicas e a localização geral das "pistas".  
