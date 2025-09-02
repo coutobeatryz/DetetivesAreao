@@ -4,7 +4,7 @@ Uma aventura **STEAM** interativa para crianças explorarem o Parque do Areão, 
 ---
 
 ## 📜 Sobre o Projeto
-<img justify-content: center width="200" height="200" alt="Logo 2" src="https://github.com/user-attachments/assets/42a9ce51-9988-46f8-8891-6126e0a70640" />
+<img display: center width="200" height="200" alt="Logo 2" src="https://github.com/user-attachments/assets/42a9ce51-9988-46f8-8891-6126e0a70640" />
 
 **"Detetives do Parque do Areão"** é um aplicativo mobile desenvolvido para incentivar crianças a explorarem o ambiente ao ar livre de forma lúdica e educativa.  
 A proposta é transformar um passeio no parque em uma emocionante caça ao tesouro, onde a tecnologia (o smartphone) se torna uma **ferramenta de descoberta, e não de distração**.
