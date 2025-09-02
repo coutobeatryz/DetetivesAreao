@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detetives do Parque do Areão</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #AED581; /* Verde claro - cor do parque */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #4E342E; /* Marrom escuro */
+        }
+
+        .container {
+            background-color: #FFF;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .logo {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5em;
+            color: #FFB300; /* Amarelo */
+            margin-bottom: 30px;
+            text-shadow: 2px 2px #4E342E;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #FFB300;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        .btn {
+            background-color: #FFB300;
+            color: #4E342E;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #FF8F00; /* Laranja */
+        }
+
+        .links {
+            margin-top: 20px;
+        }
+
+        .links a {
+            color: #4E342E;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Estilo para a tela de dashboard pós-login */
+        .dashboard {
+            display: none; /* Inicialmente oculto */
+        }
+
+        .welcome-message {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .points-display {
+            background-color: #FFB300;
+            color: #4E342E;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .start-button {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+        }
+
+        .start-button:hover {
+            background-color: #388E3C;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="login-screen">
+            <div class="logo">Detetives do Parque do Areão</div>
+            <form>
+                <div class="form-group">
+                    <label for="username">Nome de Detetive</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha Secreta</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn">Entrar na Aventura!</button>
+            </form>
+            <div class="links">
+                <a href="#">Ainda não sou um detetive</a>
+            </div>
+        </div>
+
+        <div id="dashboard-screen" class="dashboard">
+            <div class="logo">Detetives do Parque do Areão</div>
+            <div class="welcome-message">Bem-vindo, Detetive!</div>
+            <div class="points-display">
+                Sua Pontuação: 1200 Pontos
+            </div>
+            <button class="btn start-button">Iniciar Caça aos QR Codes!</button>
+             <div class="links">
+                <a href="#">Sair</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Simples script para simular a transição de login para o dashboard
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio real do formulário
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('dashboard-screen').style.display = 'block';
+        });
+    </script>
+
+</body>
+</html>
