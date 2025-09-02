@@ -23,8 +23,6 @@ Cada QR Code escaneado revela uma curiosidade, um desafio ou um fato interessant
   <img width="282" height="583" alt="image" src="https://github.com/user-attachments/assets/a3d674cb-507d-41d4-a0a8-4e4bcb62aec1" />
 </p>
 
-
-
 ![dashboard](https://github.com/user-attachments/assets/eb0d8b9d-592e-4d98-98df-557f3a287126)
 
 ---
