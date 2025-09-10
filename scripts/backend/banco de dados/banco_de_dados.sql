@@ -87,3 +87,4 @@ CREATE TABLE Leituras (
     pontos_ganhos INT NOT NULL,
     UNIQUE(id_aluno, id_qrcode)
 );
+
