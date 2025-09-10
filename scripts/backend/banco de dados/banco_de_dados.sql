@@ -1,27 +1,12 @@
 CREATE TABLE profiles (
-  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  nome VARCHAR(50),
-  sobrenome VARCHAR(100),
-  apelido VARCHAR(100) UNIQUE,
-  data_nascimento DATE,
-  tipo_pessoa VARCHAR(10) CHECK (tipo_pessoa IN ('aluno', 'professor'))
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nome VARCHAR(50),
+    sobrenome VARCHAR(100),
+    apelido VARCHAR(100) UNIQUE NOT NULL,
+    senha_hash VARCHAR(60) NOT NULL, 
+    data_nascimento DATE,
+    tipo_pessoa VARCHAR(10) CHECK (tipo_pessoa IN ('aluno', 'professor'))
 );
-
-create function public.handle_new_user()
-returns trigger
-language plpgsql
-security definer set search_path = public
-as $$
-begin
-  insert into public.profiles (id, apelido, tipo_pessoa, nome)
-  values (new.id, new.raw_user_meta_data->>'apelido', new.raw_user_meta_data->>'tipo_pessoa', new.raw_user_meta_data->>'nome');
-  return new;
-end;
-$$;
-
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute procedure public.handle_new_user();
 
 CREATE TABLE Escolas (
     id SERIAL PRIMARY KEY,
@@ -87,4 +72,3 @@ CREATE TABLE Leituras (
     pontos_ganhos INT NOT NULL,
     UNIQUE(id_aluno, id_qrcode)
 );
-
