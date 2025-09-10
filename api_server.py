@@ -94,25 +94,60 @@ def login():
         cursor.execute(sql_query, (apelido,))
         user = cursor.fetchone()
 
-        # A CORREÇÃO ESTÁ AQUI: Convertemos o hash do banco para bytes ANTES de comparar.
-        if user and bcrypt.checkpw(senha.encode('utf-8'), user['senha_hash'].encode('utf-8')):
-            # Login bem-sucedido
-            aluno_data = {
-                "id": str(user['id']),
-                "nome": user['nome'],
-                "pontuacao_total": user['pontuacao_total']
-            }
-            return jsonify({"status": "sucesso", "dados_aluno": aluno_data})
-        else:
-            # Falha no login
-            return jsonify({"status": "erro", "mensagem": "Apelido ou senha inválidos"}), 401
+        # --- NOVOS REGISTOS DE DEPURAÇÃO ---
+        if user:
+            print(f"--- INÍCIO DA DEPURAÇÃO DO LOGIN PARA: {apelido} ---")
+            
+            senha_recebida_da_unity = senha.encode('utf-8')
+            senha_hash_do_banco = user['senha_hash'].encode('utf-8')
+            
+            print(f"Hash do banco de dados: {senha_hash_do_banco}")
+            
+            # Vamos verificar a palavra-passe e guardar o resultado
+            is_password_correct = bcrypt.checkpw(senha_recebida_da_unity, senha_hash_do_banco)
+            
+            print(f"A palavra-passe está correta? {is_password_correct}")
+            print(f"--- FIM DA DEPURAÇÃO ---")
+
+            if is_password_correct:
+                # Login bem-sucedido
+                aluno_data = {
+                    "id": str(user['id']),
+                    "nome": user['nome'],
+                    "pontuacao_total": user['pontuacao_total']
+                }
+                return jsonify({"status": "sucesso", "dados_aluno": aluno_data})
+        
+        # Se o utilizador não for encontrado ou a palavra-passe estiver incorreta
+        print(f"Falha no login para o apelido: {apelido}. Utilizador encontrado: {'Sim' if user else 'Não'}")
+        return jsonify({"status": "erro", "mensagem": "Apelido ou senha inválidos"}), 401
 
     except Exception as e:
         print(f"Erro no login: {e}")
         return jsonify({"status": "erro", "mensagem": "Erro interno do servidor"}), 500
     finally:
-        cursor.close()
-        conn.close()
+        if 'cursor' in locals() and cursor:
+            cursor.close()
+        if 'conn' in locals() and conn:
+            conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+```
+
+### O Que Fazer Agora (O Plano)
+
+1.  **Atualize o Código:** Copie todo o conteúdo do Canvas e cole-o no seu ficheiro `api_server.py`.
+2.  **Envie para o GitHub:** Faça o "commit" e "push" da alteração para o seu repositório.
+3.  **Aguarde o Deploy:** O Render vai detetar a mudança e iniciar um novo deploy automaticamente. Espere até que ele mostre "Your service is live".
+4.  **Teste na Unity:** Tente fazer o login novamente com "bia" e "123456". O erro 401 vai continuar a aparecer na Unity.
+5.  **A Pista Final:** Vá para a aba **"Logs"** no Render. Agora, você verá um novo bloco de texto que se parece com isto:
+
+    ```
+    --- INÍCIO DA DEPURAÇÃO DO LOGIN PARA: bia ---
+    Hash do banco de dados: b'$2b$12$Eflg3jJ3F1vQ3r8yY7p2yO2d.Q5z.1J6z3m.1Z0y8w.9W6u8q7G9y'
+    A palavra-passe está correta? False
+    --- FIM DA DEPURAÇÃO ---
+    Falha no login para o apelido: bia. Utilizador encontrado: Sim
+    
+
